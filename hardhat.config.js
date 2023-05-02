@@ -7,9 +7,6 @@ require('hardhat-deploy')
 require("hardhat-celo");
 require("@oasisprotocol/sapphire-hardhat");
 
-require("@matterlabs/hardhat-zksync-deploy");
-require("@matterlabs/hardhat-zksync-solc");
-
 const dotenv = require('dotenv')
 
 dotenv.config();

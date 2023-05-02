@@ -2,20 +2,19 @@ const {ethers, upgrades} = require('hardhat');
 const {expect} = require('chai');
 const {BigNumber} = require("ethers");
 const hre = require("hardhat");
-// const {loadFixture} = require("@nomicfoundation/hardhat-network-helpers");
 
 
 describe("Start Test", function () {
 
-    let contract, MultiSend, token;
+    let contract, CoinSender, token;
     let owner, newOwner, addr1, addr2;
 
     beforeEach(async () => {
         [owner, newOwner, addr1, addr2] = await ethers.getSigners();
 
-        MultiSend = await hre.ethers.getContractFactory('MultiSendV2_0');
+        CoinSender = await hre.ethers.getContractFactory('CoinSender');
 
-        contract = await upgrades.deployProxy(MultiSend, [
+        contract = await upgrades.deployProxy(CoinSender, [
             owner.address,
         ]);
 
@@ -52,7 +51,6 @@ describe("Start Test", function () {
             const balanceETH = await ethers.provider.getBalance(owner.address)
             await contract.multiSendDiffEth([owner.address], [ethers.utils.formatUnits(1, "wei")], {value: ethers.utils.formatUnits(1, "wei")});
         })
-        //TODO: Connect token
 
         it("Send TOKENS", async () => {
             const balanceETH = await ethers.provider.getBalance(owner.address)
@@ -82,27 +80,6 @@ describe("Start Test", function () {
         it("Send ETH with empty recipients", async () => {
             await expect(contract.multiSendDiffEth([], [ethers.utils.formatUnits(1, "wei")], {value: ethers.utils.formatUnits(1, "wei")})).to.be.reverted;
         })
-
-
-        // it("upgrade contract v1.0 to v1.1 check", async () => {
-        //
-        //
-        //     multisend = await upgrades.upgradeProxy(
-        //       contracts.MultiSend.address,
-        //       contractV1_1
-        //     );
-        //
-        //     await multisend.deployed();
-        //
-        //     multisend = await upgrades.upgradeProxy(
-        //       multisend.address,
-        //       contractV1_2
-        //     );
-        //
-        //     await multisend.deployed();
-        // });
-
-
     })
 })
 
