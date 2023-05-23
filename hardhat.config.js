@@ -37,7 +37,7 @@ const networksConfig = {
   fantom: {
     url: "https://rpcapi.fantom.network",
     chainId: 250,
-    accounts: [`0x${privateKey}`]
+    accounts: [privateKey]
     // gasPrice: 31000000000 // 31 Gwei
   },
   celo: {
@@ -53,7 +53,7 @@ const networksConfig = {
   godwoken: {
     url: "https://v1.mainnet.godwoken.io/rpc",
     chainId: 71402,
-    accounts: [`0x${privateKey}`]
+    accounts: [privateKey]
     // gasPrice: 30000000000, // 30 Gwei
     // gasLimit: 0x1fffffffffffff,
   },
@@ -83,7 +83,7 @@ const networksConfig = {
   arbitrumOne: {
     url: "https://arb1.arbitrum.io/rpc",
     chainId: 42161,
-    accounts: [`0x${privateKey}`]
+    accounts: [privateKey]
   },
   ronin: {
     url: "https://api.roninchain.com/rpc",
@@ -108,6 +108,11 @@ const networksConfig = {
     url: "https://testnet.era.zksync.dev", // URL of the zkSync network RPC
     ethNetwork: "goerli", // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
     zksync: true,
+  },
+  zetaTestnet: {
+    url: "https://api.athens2.zetachain.com/evm", 
+    accounts: [privateKey],
+    chainId: 7001,
   },
   moonriver: {
     url: "https://rpc.moonriver.moonbeam.network",
@@ -270,6 +275,7 @@ config.networks = {
   okexchain: createConfig('okexchain'),
   palm: createConfig('palm'),
   telos: createConfig('telos'),
+  zetaTestnet: createConfig('zetaTestnet'),
   // zkSync: createConfig('zkSync'),
   // zkTestnet: createConfig('zkTestnet'),
 
