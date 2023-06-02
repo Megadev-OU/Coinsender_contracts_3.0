@@ -129,6 +129,16 @@ const networksConfig = {
     accounts: [privateKey],
     chainId: 1351057110,
   },
+  iotexTestnet: {
+    url: `https://babel-api.testnet.iotex.io`,
+    accounts: [privateKey],
+    chainId: 4690,
+  },
+  iotex: {
+    url: `https://babel-api.mainnet.iotex.io`,
+    accounts: [privateKey],
+    chainId: 4689,
+  },
   moonriver: {
     url: "https://rpc.moonriver.moonbeam.network",
     accounts: [privateKey],
@@ -294,8 +304,12 @@ config.networks = {
   scrollAlphaTestnet: createConfig('scrollAlphaTestnet'),
   cronosTestnet: createConfig('cronosTestnet'),
   skaleTestnet: createConfig('skaleTestnet'),
+  iotexTestnet: createConfig('iotexTestnet'),
+  iotex: createConfig('iotex'),
   // zkSync: createConfig('zkSync'),
   // zkTestnet: createConfig('zkTestnet'),
+  
+
 
   hardhat: {
     chainId: 1337
