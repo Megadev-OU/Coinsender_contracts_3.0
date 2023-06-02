@@ -114,6 +114,21 @@ const networksConfig = {
     accounts: [privateKey],
     chainId: 7001,
   },
+  scrollAlphaTestnet: {
+    url: "https://alpha-rpc.scroll.io/l2", 
+    accounts: [privateKey],
+    chainId: 534353,
+  },
+  cronosTestnet: {
+    url: "https://evm-t3.cronos.org", 
+    accounts: [privateKey],
+    chainId: 338,
+  },
+  skaleTestnet: {
+    url: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix", 
+    accounts: [privateKey],
+    chainId: 1351057110,
+  },
   moonriver: {
     url: "https://rpc.moonriver.moonbeam.network",
     accounts: [privateKey],
@@ -276,6 +291,9 @@ config.networks = {
   palm: createConfig('palm'),
   telos: createConfig('telos'),
   zetaTestnet: createConfig('zetaTestnet'),
+  scrollAlphaTestnet: createConfig('scrollAlphaTestnet'),
+  cronosTestnet: createConfig('cronosTestnet'),
+  skaleTestnet: createConfig('skaleTestnet'),
   // zkSync: createConfig('zkSync'),
   // zkTestnet: createConfig('zkTestnet'),
 
