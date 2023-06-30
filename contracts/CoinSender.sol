@@ -55,7 +55,7 @@ contract CoinSender is UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgra
     function multiSendDiffEth(
         address[] memory recipients,
         uint256[] memory amounts
-    ) public payable nonReentrant {
+    ) external payable nonReentrant {
         require(msg.value > 0, "Invalid amount");
         require(recipients.length > 0, "Recipients list is empty");
         require(
