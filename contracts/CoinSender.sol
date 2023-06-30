@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -11,7 +10,6 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 
 
 contract CoinSender is UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
-    using SafeMathUpgradeable for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     string public constant name = "CoinSender";
@@ -45,6 +43,7 @@ contract CoinSender is UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgra
     receive() external payable {}
 
     function changePercentage(uint256 _percent) public onlyOwner {
+        require(_percent < 10000, "Bigger than amount");
         percent = _percent;
     }
 
@@ -87,10 +86,10 @@ contract CoinSender is UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgra
     }
 
     function multiSendDiffToken(
-        address[] memory recipients,
-        uint256[] memory amounts,
+        address[] calldata recipients,
+        uint256[] calldata amounts,
         address token
-    ) public nonReentrant {
+    ) external nonReentrant {
         require(recipients.length > 0, "Recipients list is empty");
         require(recipients.length == amounts.length, "Lengths of recipients and amounts arrays do not match");
 
@@ -114,17 +113,16 @@ contract CoinSender is UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgra
     }
 
     function calculateTotalAmountTaxes(
-        address[] memory recipients,
-        uint256[] memory amounts
-    ) public view returns(uint256 taxes, uint256 totalSum) {
-
+        address[] calldata recipients,
+        uint256[] calldata amounts
+    ) public pure returns(uint256 taxes, uint256 totalSum) {
         totalSum = 0;
         taxes = 0;
-        uint256 fee;
-        for (uint256 i = 0; i < recipients.length; i++) {
-            fee = amounts[i].mul(percent).div(10000);
-            totalSum = totalSum.add(amounts[i]);
-            taxes = taxes.add(fee);
+        uint256 arrayLength = recipients.length;
+        for (uint256 i = 0; i < arrayLength; i++) {
+            uint256 fee = amounts[i] * percent / 10000;
+            totalSum = totalSum + amounts[i];
+            taxes = taxes + fee;
         }
     }
 
