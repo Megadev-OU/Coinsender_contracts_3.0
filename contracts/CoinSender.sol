@@ -73,9 +73,6 @@ contract CoinSender is ReentrancyGuard, AccessControl {
         address token,
         bytes calldata signature
     ) external nonReentrant {
-        // Ensure the contract at the given address supports the ERC-20 interface
-        require(supportsInterface(token), "Contract does not support the ERC-20 interface");
-
         require(recipients.length > 0, "Recipients list is empty");
         require(recipients.length == amounts.length, "Lengths of recipients and amounts arrays do not match");
 
@@ -114,30 +111,6 @@ contract CoinSender is ReentrancyGuard, AccessControl {
             taxes = taxes + fee;
         }
     }
-
-    function supportsInterface(address _contract) public view returns (bool) {
-        // Magic value for ERC-20 interface ID: bytes4(keccak256("totalSupply()")) ^ bytes4(keccak256("balanceOf(address)")) ^
-        // bytes4(keccak256("allowance(address,address)")) ^ bytes4(keccak256("transfer(address,uint256)")) ^
-        // bytes4(keccak256("approve(address,uint256)")) ^ bytes4(keccak256("transferFrom(address,address,uint256)"))
-        bytes4 interfaceId = 0x36372b07;
-
-        // Magic value for EIP-165 interface ID: bytes4(keccak256("supportsInterface(bytes4)"))
-        bytes4 eip165InterfaceId = 0x01ffc9a7;
-
-        bool success;
-        bytes memory result;
-
-        // If the contract does not support EIP-165, return false
-        (success, ) = _contract.staticcall(abi.encodeWithSignature("supportsInterface(bytes4)", eip165InterfaceId));
-        if (!success) {
-            return false;
-        }
-
-        // If the contract supports EIP-165, check if it also supports the given interface
-        (success, result) = _contract.staticcall(abi.encodeWithSignature("supportsInterface(bytes4)", interfaceId));
-        return success && abi.decode(result, (bool));
-    }
-
 
     function verifySignature(address[] memory recipients, uint256[] memory amounts, bytes memory signature) internal view {
         bytes32 hash = keccak256(abi.encodePacked(recipients, amounts));
