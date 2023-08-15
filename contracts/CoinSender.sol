@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -14,19 +14,20 @@ contract CoinSender is ReentrancyGuard, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     uint256 public constant MAX_PERCENT = 1000;  // 10%
 
-    uint256 public immutable percent;
-    address public immutable bank;
+    uint256 public percent;
+    address public bank;
 
-    constructor(uint256 _percent, address _bank, address _defaultAdmin) {
+    constructor(uint256 _percent, address _bank, address _timeLockController, address _defaultOperator) {
         require(_bank != address(0), "Bank address is not be zero");
         require(_percent <= MAX_PERCENT, "Percentage cannot exceed maximum limit");
-        require(_defaultAdmin != address(0), "Default admin address is not be zero");
+        require(_timeLockController != address(0), "Default admin address is not be zero");
+        require(_defaultOperator != address(0), "Default admin address is not be zero");
 
         percent = _percent;
         bank = _bank;
 
-        _setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
-        _setupRole(OPERATOR_ROLE, _defaultAdmin);
+        _setupRole(DEFAULT_ADMIN_ROLE, _timeLockController);
+        _setupRole(OPERATOR_ROLE, _defaultOperator);
     }
 
     receive() external payable {}
@@ -65,6 +66,18 @@ contract CoinSender is ReentrancyGuard, AccessControl {
         if (remainingBalance > 0) {
             payable(msg.sender).transfer(remainingBalance);
         }
+    }
+
+    function changePercentage(uint256 _percent) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        require(_percent <= MAX_PERCENT, "Percentage cannot exceed maximum limit");
+        percent = _percent;
+    }
+
+    function changeBankAddress(address _bank) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+        require(_bank != address(0), "Bank address is not be zero");
+        bank = _bank;
     }
 
     function multiSendDiffToken(
@@ -138,5 +151,11 @@ contract CoinSender is ReentrancyGuard, AccessControl {
             s := mload(add(sig, 64))
             v := byte(0, mload(add(sig, 96)))
         }
+    }
+
+    function grantRole(bytes32 role, address account) public virtual override {
+        require(role != DEFAULT_ADMIN_ROLE, "CoinSender: Cannot change or add default admin role");
+
+        super.grantRole(role, account);
     }
 }
